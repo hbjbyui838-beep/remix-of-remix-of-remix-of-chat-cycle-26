@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Bell, Plus, LogOut } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { can, isForUser, ROLE_LABEL, useStore, type Role } from "@/lib/store";
@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import loginBanner from "@/assets/login-banner.jpg";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { PushService } from "@/lib/push/service";
 import icHome from "@/assets/icons/home.png";
 import icPurchases from "@/assets/icons/purchases.png";
 import icInventory from "@/assets/icons/inventory.png";
@@ -78,6 +79,42 @@ export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [fabOpen, setFabOpen] = useState(false);
   const [expenseMenu, setExpenseMenu] = useState(false);
+  const [pushInitialized, setPushInitialized] = useState(false);
+
+  // Initialize Push Notifications and Offline Sync on mount
+  useEffect(() => {
+    if (!user || pushInitialized) return;
+
+    const initPush = async () => {
+      try {
+        console.log('[AppShell] Initializing Push Service...');
+        const result = await PushService.initializePush();
+        console.log('[AppShell] Push initialization result:', result);
+        setPushInitialized(true);
+
+        // Load offline notifications
+        const unreadOffline = await PushService.getUnreadOfflineNotifications();
+        if (unreadOffline.length > 0) {
+          console.log('[AppShell] Found', unreadOffline.length, 'offline notifications');
+        }
+      } catch (error) {
+        console.error('[AppShell] Failed to initialize push:', error);
+      }
+    };
+
+    void initPush();
+  }, [user, pushInitialized]);
+
+  // Listen for online/offline events and trigger sync
+  useEffect(() => {
+    const handleOnline = async () => {
+      console.log('[AppShell] Online - triggering sync');
+      await PushService.triggerSync();
+    };
+
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, []);
 
   if (!user) {
     return (

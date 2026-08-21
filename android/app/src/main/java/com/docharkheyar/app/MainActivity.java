@@ -1,4 +1,4 @@
-package com.bikebiboss.app;
+package com.docharkheyar.app;
 
 import com.getcapacitor.BridgeActivity;
 
