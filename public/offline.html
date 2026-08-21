@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f97316">
+    <title>آفلاین - دوچرخه‌یار</title>
+    <link rel="manifest" href="/manifest.json">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+        color: white;
+        padding: 2rem;
+      }
+      
+      .container {
+        text-align: center;
+        max-width: 400px;
+        animation: fadeIn 0.5s ease-out;
+      }
+      
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+      
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+      
+      p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+      }
+      
+      .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        margin-top: 1rem;
+      }
+      
+      .dot {
+        width: 10px;
+        height: 10px;
+        background: #ef4444;
+        border-radius: 50%;
+        animation: blink 1.5s infinite;
+      }
+      
+      @keyframes blink {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      
+      .retry-button {
+        background: white;
+        color: #ea580c;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .retry-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+      
+      .retry-button:active {
+        transform: translateY(0);
+      }
+      
+      .features {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .feature-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0.5rem 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">📡</div>
+      <h1>شما آفلاین هستید</h1>
+      <p>اتصال اینترنت خود را بررسی کنید.<br>نگران نباشید، اطلاعات شما ذخیره شده و به محض اتصال همگام‌سازی می‌شود.</p>
+      
+      <div class="status-indicator">
+        <span class="dot"></span>
+        <span>در حال انتظار برای اتصال...</span>
+      </div>
+      
+      <button class="retry-button" onclick="window.location.reload()">
+        تلاش مجدد 🔄
+      </button>
+      
+      <div class="features">
+        <div class="feature-item">
+          <span>✅</span>
+          <span>ذخیره‌سازی خودکار تغییرات</span>
+        </div>
+        <div class="feature-item">
+          <span>🔄</span>
+          <span>همگام‌سازی هنگام اتصال</span>
+        </div>
+        <div class="feature-item">
+          <span>📱</span>
+          <span>دسترسی به داده‌های کش شده</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Listen for online event and auto-reload
+      window.addEventListener('online', () => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
+
+      // Update status indicator when online
+      function updateStatus() {
+        const dot = document.querySelector('.dot');
+        const text = document.querySelector('.status-indicator span:last-child');
+        
+        if (navigator.onLine) {
+          dot.style.background = '#22c55e';
+          text.textContent = 'در حال اتصال...';
+        } else {
+          dot.style.background = '#ef4444';
+          text.textContent = 'در حال انتظار برای اتصال...';
+        }
+      }
+
+      window.addEventListener('online', updateStatus);
+      window.addEventListener('offline', updateStatus);
+    </script>
+  </body>
+</html>
